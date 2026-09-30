@@ -6,10 +6,10 @@
    CONFIG — edit these to rebrand the site
    ---------------------------------------------------------- */
 const CONFIG = {
-  phone: "+919876543210",        // used for tel: and WhatsApp (digits + country code, no spaces)
+  phone: "+919929932734",        // used for tel: and WhatsApp
   whatsappMessage: "Hi! I'd like to enquire about booking MK Studio for my event.",
-  email: "hello@mkstudio.in",
-  instagram: "https://instagram.com/mkstudio",
+  email: "manish@studio.in",
+  instagram: "https://www.instagram.com/video_editer_924/",
 };
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -65,19 +65,31 @@ function initMobileMenu(){
 }
 
 /* ----------------------------------------------------------
-   Smooth scrolling for in-page anchors (nav links scroll to sections)
+   Smooth scrolling for in-page anchors
    ---------------------------------------------------------- */
 function initSmoothAnchors(){
   document.querySelectorAll('a[href^="#"]').forEach(link => {
     link.addEventListener("click", (e) => {
       const id = link.getAttribute("href");
       if(id.length < 2) return;
+
       const target = document.querySelector(id);
       if(!target) return;
+
       e.preventDefault();
-      const navHeight = document.getElementById("nav")?.offsetHeight || 0;
-      const top = target.getBoundingClientRect().top + window.scrollY - (navHeight + 12);
-      window.scrollTo({ top, behavior:"smooth" });
+
+      const navHeight =
+        document.getElementById("nav")?.offsetHeight || 0;
+
+      const top =
+        target.getBoundingClientRect().top +
+        window.scrollY -
+        (navHeight + 12);
+
+      window.scrollTo({
+        top,
+        behavior:"smooth"
+      });
     });
   });
 }
@@ -101,7 +113,10 @@ function initReveal(){
         io.unobserve(entry.target);
       }
     });
-  }, { threshold:0.15, rootMargin:"0px 0px -60px 0px" });
+  }, {
+    threshold:0.15,
+    rootMargin:"0px 0px -60px 0px"
+  });
 
   items.forEach(el => io.observe(el));
 }
@@ -111,6 +126,7 @@ function initReveal(){
    ---------------------------------------------------------- */
 function initCounters(){
   const stats = document.querySelectorAll(".stat-num");
+
   if(!stats.length || !("IntersectionObserver" in window)) return;
 
   const animate = (el) => {
@@ -119,11 +135,20 @@ function initCounters(){
     const start = performance.now();
 
     const step = (now) => {
-      const progress = Math.min((now - start) / duration, 1);
+      const progress = Math.min(
+        (now - start) / duration,
+        1
+      );
+
       const eased = 1 - Math.pow(1 - progress, 3);
+
       el.textContent = Math.round(eased * target);
-      if(progress < 1) requestAnimationFrame(step);
+
+      if(progress < 1){
+        requestAnimationFrame(step);
+      }
     };
+
     requestAnimationFrame(step);
   };
 
@@ -134,7 +159,9 @@ function initCounters(){
         io.unobserve(entry.target);
       }
     });
-  }, { threshold:0.5 });
+  }, {
+    threshold:0.5
+  });
 
   stats.forEach(el => io.observe(el));
 }
@@ -145,16 +172,25 @@ function initCounters(){
 function initPortfolioFilters(){
   const buttons = document.querySelectorAll(".filter-btn");
   const cards = document.querySelectorAll(".work-card");
+
   if(!buttons.length || !cards.length) return;
 
   buttons.forEach(btn => {
     btn.addEventListener("click", () => {
-      buttons.forEach(b => b.classList.remove("active"));
+
+      buttons.forEach(b =>
+        b.classList.remove("active")
+      );
+
       btn.classList.add("active");
 
       const filter = btn.dataset.filter;
+
       cards.forEach(card => {
-        const match = filter === "all" || card.dataset.category === filter;
+        const match =
+          filter === "all" ||
+          card.dataset.category === filter;
+
         card.classList.toggle("hide", !match);
       });
     });
@@ -172,22 +208,31 @@ function initVideoModal(){
   const video = document.getElementById("modalVideo");
   const titleEl = document.getElementById("modalTitle");
   const descEl = document.getElementById("modalDesc");
+
   if(!modal || !video) return;
 
   const open = ({ src, title, desc }) => {
     video.src = src;
+
     titleEl.textContent = title || "";
     descEl.textContent = desc || "";
+
     modal.classList.add("open");
     modal.setAttribute("aria-hidden", "false");
+
     document.body.style.overflow = "hidden";
-    video.play().catch(() => { /* autoplay may be blocked — user can press play */ });
+
+    video.play().catch(() => {
+      /* autoplay may be blocked — user can press play */
+    });
   };
 
   const close = () => {
     modal.classList.remove("open");
     modal.setAttribute("aria-hidden", "true");
+
     document.body.style.overflow = "";
+
     video.pause();
     video.removeAttribute("src");
     video.load();
@@ -205,9 +250,16 @@ function initVideoModal(){
   });
 
   closeBtn?.addEventListener("click", close);
+
   backdrop?.addEventListener("click", close);
+
   document.addEventListener("keydown", (e) => {
-    if(e.key === "Escape" && modal.classList.contains("open")) close();
+    if(
+      e.key === "Escape" &&
+      modal.classList.contains("open")
+    ){
+      close();
+    }
   });
 }
 
@@ -215,26 +267,46 @@ function initVideoModal(){
    Contact actions — call / WhatsApp / email / instagram
    ---------------------------------------------------------- */
 function initContactActions(){
+
   const digits = CONFIG.phone.replace(/[^\d+]/g, "");
+
   const waNumber = digits.replace("+", "");
-  const waLink = `https://wa.me/${waNumber}?text=${encodeURIComponent(CONFIG.whatsappMessage)}`;
+
+  const waLink =
+    `https://wa.me/${waNumber}?text=${encodeURIComponent(CONFIG.whatsappMessage)}`;
 
   document.querySelectorAll('[data-action]').forEach(el => {
+
     const action = el.dataset.action;
+
     el.addEventListener("click", (e) => {
+
       switch(action){
+
         case "call":
           window.location.href = `tel:${digits}`;
           break;
+
         case "whatsapp":
           e.preventDefault();
-          window.open(waLink, "_blank", "noopener");
+          window.open(
+            waLink,
+            "_blank",
+            "noopener"
+          );
           break;
+
         case "email":
-          window.location.href = `mailto:${CONFIG.email}`;
+          window.location.href =
+            `mailto:${CONFIG.email}`;
           break;
+
         case "instagram":
-          window.open(CONFIG.instagram, "_blank", "noopener");
+          window.open(
+            CONFIG.instagram,
+            "_blank",
+            "noopener"
+          );
           break;
       }
     });
@@ -247,54 +319,128 @@ function initContactActions(){
 function initForm(){
   const form = document.getElementById("enquiryForm");
   const success = document.getElementById("formSuccess");
+
   if(!form) return;
 
-  const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const phoneRe = /^[\d\s+()-]{7,}$/;
+  const emailRe =
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  const phoneRe =
+    /^[\d\s+()-]{7,}$/;
 
   const validators = {
-    name: (v) => v.trim().length > 1,
-    phone: (v) => phoneRe.test(v.trim()),
-    email: (v) => emailRe.test(v.trim()),
-    eventDate: (v) => v.trim().length > 0,
-    service: (v) => v.trim().length > 0,
-    message: (v) => v.trim().length > 4
+
+    name: (v) =>
+      v.trim().length > 1,
+
+    phone: (v) =>
+      phoneRe.test(v.trim()),
+
+    email: (v) =>
+      emailRe.test(v.trim()),
+
+    eventDate: (v) =>
+      v.trim().length > 0,
+
+    service: (v) =>
+      v.trim().length > 0,
+
+    message: (v) =>
+      v.trim().length > 4
+
   };
 
   const validateField = (input) => {
-    const field = input.closest(".field");
-    const isValid = validators[input.name] ? validators[input.name](input.value) : true;
-    field?.classList.toggle("invalid", !isValid);
+
+    const field =
+      input.closest(".field");
+
+    const isValid =
+      validators[input.name]
+        ? validators[input.name](input.value)
+        : true;
+
+    field?.classList.toggle(
+      "invalid",
+      !isValid
+    );
+
     return isValid;
   };
 
-  form.querySelectorAll("input, select, textarea").forEach(input => {
-    input.addEventListener("blur", () => validateField(input));
-    input.addEventListener("input", () => {
-      if(input.closest(".field")?.classList.contains("invalid")) validateField(input);
+  form
+    .querySelectorAll("input, select, textarea")
+    .forEach(input => {
+
+      input.addEventListener(
+        "blur",
+        () => validateField(input)
+      );
+
+      input.addEventListener(
+        "input",
+        () => {
+
+          if(
+            input
+              .closest(".field")
+              ?.classList.contains("invalid")
+          ){
+            validateField(input);
+          }
+
+        }
+      );
+
     });
-  });
 
   form.addEventListener("submit", (e) => {
+
     e.preventDefault();
+
     success.classList.remove("show");
 
     let allValid = true;
-    form.querySelectorAll("input, select, textarea").forEach(input => {
-      if(!validateField(input)) allValid = false;
-    });
+
+    form
+      .querySelectorAll("input, select, textarea")
+      .forEach(input => {
+
+        if(!validateField(input)){
+          allValid = false;
+        }
+
+      });
 
     if(!allValid){
-      form.querySelector(".field.invalid input, .field.invalid select, .field.invalid textarea")
+
+      form
+        .querySelector(
+          ".field.invalid input, .field.invalid select, .field.invalid textarea"
+        )
         ?.focus();
+
       return;
     }
 
-    // No backend is wired up in this template — replace this block with
-    // a fetch() call to your form endpoint / email service when ready.
+    // No backend is wired up in this template —
+    // replace this block with a fetch() call
+    // to your form endpoint / email service when ready.
+
     success.classList.add("show");
+
     form.reset();
-    form.querySelectorAll(".field").forEach(f => f.classList.remove("invalid"));
-    success.scrollIntoView({ behavior:"smooth", block:"center" });
+
+    form
+      .querySelectorAll(".field")
+      .forEach(f =>
+        f.classList.remove("invalid")
+      );
+
+    success.scrollIntoView({
+      behavior:"smooth",
+      block:"center"
+    });
+
   });
 }
